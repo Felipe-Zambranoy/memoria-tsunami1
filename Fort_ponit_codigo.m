@@ -200,3 +200,4 @@ title('Tamaño ∝ Slip × 10; Color ∝ H_{max} (bajo slip)')
 xlabel('Magnitud (con dispersión por distancia)')
 ylabel('Latitud Sur')
 
+hola
