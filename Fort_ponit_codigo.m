@@ -42,18 +42,18 @@ h_max_alto_mw9_5=alto{1,3};
 h_max_bajo_mw9_5=bajo{1,3};
 
 % --- Calcular momento sismico de 9.5 Mw---
-slip_mean_9_5_alto = alto{1,19};  % extrae el valor numérico, no la tabla
+slip_mean_9_5_alto = alto{1,19};  
 slip_mean_9_5_bajo = bajo{1,19};
-Area_9_5_alto = alto{1,18};
-Area_9_5_bajo = bajo{1,18};
-Ms_9_5_alto = slip_mean_9_5_alto * Area_9_5_alto;
-Ms_9_5_bajo = slip_mean_9_5_bajo * Area_9_5_bajo;
+Area_9_5_alto = alto{1,18};       % area total slip alto
+Area_9_5_bajo = bajo{1,18};       % area total slip bajo
+Ms_9_5_alto = slip_mean_9_5_alto * Area_9_5_alto;   %momento sismico alto
+Ms_9_5_bajo = slip_mean_9_5_bajo * Area_9_5_bajo;   %momento sismico bajo
 
 % --- latitudes norte y sur del sismo de  9.5 Mw---
-ls_9_5_alto = round(alto{1,1}, 5);
-ln_9_5_alto = round(alto{1,2}, 5);
-ls_9_5_bajo = round(bajo{1,1}, 5);
-ln_9_5_bajo = round(bajo{1,2}, 5);
+ls_9_5_alto = round(alto{1,1}, 5);    % latitud sur alto
+ln_9_5_alto = round(alto{1,2}, 5);    % latitud norte alto
+ls_9_5_bajo = round(bajo{1,1}, 5);    % latitud sur bajo
+ln_9_5_bajo = round(bajo{1,2}, 5);    % latitud norte bajo
 
 
 % --- filtrar valores de 8mw que esten entre las latitudes N y S de 9.5 Mw---
@@ -68,6 +68,7 @@ n_bajo = height(Mw8_bajo);   % cantidad de filas de bajo slip
 Ms_8_alto = zeros(n_alto,1);  % preasigno vector para momentos
 Ms_8_bajo = zeros(n_bajo,1);
 
+%calcular momento sismico de mw 8
 for i = 1:n_alto
     Ms_8_alto(i) = Mw8_alto{i,19} * Mw8_alto{i,18};
 end
@@ -87,7 +88,7 @@ h_max_acumulada_bajo_mw8 = 0;
 % Bandera para saber si se alcanzó el objetivo
 alcanzado = false;
 
-% Recorrer eventos y acumular
+% Recorrer eventos y acumular los momentos sismicos y alturas de mw 8
 for i = 1:length(Ms_8_alto)
     Ms_acumulado_alto_mw8 = Ms_acumulado_alto_mw8 + Ms_8_alto(i);
     h_max_acumulada_alto_mw8 = h_max_acumulada_alto_mw8 + Mw8_alto{i,3};
@@ -150,7 +151,8 @@ ylabel('Altura máxima de tsunami (m)')
 title('Comparación de alturas máximas de tsunami: Mw 8 acumulado vs Mw 9.5')
 grid on
 
-% --- Paso 1: Crear tabla combinada de eventos ---
+% Graficos 
+
 eventos_alto = [Mw8_alto; alto];  % 7 eventos Mw 8 + 1 evento Mw 9.5 (alto slip)
 
 figure(23)  % MISMA FIGURA QUE EL ORIGINAL
