@@ -60,7 +60,7 @@ ln_9_5_bajo = round(bajo{1,2}, 5);    % latitud norte bajo
 filtro_alto = (Mw8_unitarios_AltoSlip.Lat_S >= ls_9_5_alto) & (Mw8_unitarios_AltoSlip.Lat_N <= ln_9_5_alto);
 Mw8_alto = Mw8_unitarios_AltoSlip(filtro_alto, :);
 filtro_bajo = (Mw8_unitarios_BajoSlip.Lat_S >= ls_9_5_bajo) & (Mw8_unitarios_BajoSlip.Lat_S <= ln_9_5_bajo);
-Mw8_bajo = Mw8_unitarios_BajoSlip(filtro_alto, :);
+Mw8_bajo = Mw8_unitarios_BajoSlip(filtro_bajo, :);
 
 n_alto = height(Mw8_alto);   % cantidad de filas de alto slip
 n_bajo = height(Mw8_bajo);   % cantidad de filas de bajo slip
