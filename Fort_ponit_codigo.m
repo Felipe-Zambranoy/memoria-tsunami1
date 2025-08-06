@@ -77,68 +77,37 @@ for i = 1:n_bajo
     Ms_8_bajo(i) = Mw8_bajo{i,19} * Mw8_bajo{i,18};
 end
 
-% Inicializar suma acumulada
-Ms_acumulado_alto_mw8 = 0;
-Ms_acumulado_bajo_mw8 = 0;
-indice_alto = 0;
-indice_bajo = 0;
-h_max_acumulada_alto_mw8 = 0;
-h_max_acumulada_bajo_mw8 = 0;
+% --- Acumulación para alto slip ---
+Ms_acumulado_alto_mw8 = sum(Ms_8_alto);  % Suma total de momentos Mw 8 alto slip
+h_max_acumulada_alto_mw8 = sum(Mw8_alto.H_max);  % Suma total de alturas
 
-% Bandera para saber si se alcanzó el objetivo
-alcanzado = false;
+factor_alto = Ms_9_5_alto/Ms_acumulado_alto_mw8 ;  % Se calcula el factor entre momentos
+h_max_ajustada_alto_mw8 = h_max_acumulada_alto_mw8 * factor_alto;  % Ajuste de altura
 
-% Recorrer eventos y acumular los momentos sismicos y alturas de mw 8
-for i = 1:length(Ms_8_alto)
-    Ms_acumulado_alto_mw8 = Ms_acumulado_alto_mw8 + Ms_8_alto(i);
-    h_max_acumulada_alto_mw8 = h_max_acumulada_alto_mw8 + Mw8_alto{i,3};
-    
-    if Ms_acumulado_alto_mw8 >= Ms_9_5_alto
-        indice_alto = i;
-        alcanzado = true;
-        break;
-    end
-end
+fprintf('🔹 ALTO SLIP\n');
+fprintf('Se acumularon %d eventos Mw 8 (alto slip)\n', n_alto);
+fprintf('Momento acumulado: %.2e Nm\n', Ms_acumulado_alto_mw8);
+fprintf('Momento Mw 9.5 (alto slip): %.2e Nm\n', Ms_9_5_alto);
+fprintf('🔁 Factor Mw8/Mw9.5: %.4f\n', factor_alto);
+fprintf('Altura ajustada Mw 8 (alto slip): %.2f m\n', h_max_ajustada_alto_mw8);
 
-% Mostrar resultados
-if alcanzado
-    fprintf('✅ Se necesitan %d eventos Mw 8 (alto slip) para igualar o superar el momento sísmico de Mw 9.5\n', indice_alto);
-    fprintf('Momento acumulado: %.2e Nm\n', Ms_acumulado_alto_mw8);
-else
-    factor_alto = Ms_9_5_alto / Ms_acumulado_alto_mw8;
-    fprintf('⚠️ No se alcanzó el momento sísmico de Mw 9.5 con todos los eventos disponibles.\n');
-    fprintf('Se usaron los %d eventos disponibles (suma total: %.2e Nm)\n', length(Ms_8_alto), Ms_acumulado_alto_mw8);
-    fprintf('El factor de escala necesario es: %.4f\n', factor_alto);
-    h_max_acumulada_alto_mw8 = h_max_acumulada_alto_mw8 * factor_alto;
-end
+% --- Acumulación para bajo slip ---
+Ms_acumulado_bajo_mw8 = sum(Ms_8_bajo);  % Suma total de momentos Mw 8 bajo slip
+h_max_acumulada_bajo_mw8 = sum(Mw8_bajo.H_max);  % Suma total de alturas
 
-% Recorrer eventos y acumular
-for i = 1:length(Ms_8_bajo)
-    Ms_acumulado_bajo_mw8 = Ms_acumulado_bajo_mw8 + Ms_8_bajo(i);
-    h_max_acumulada_bajo_mw8 = h_max_acumulada_bajo_mw8 + Mw8_bajo{i,3};
-    
-    if Ms_acumulado_bajo_mw8 >= Ms_9_5_bajo
-        indice_bajo = i;
-        alcanzado = true;
-        break;
-    end
-end
+factor_bajo = Ms_9_5_bajo/Ms_acumulado_bajo_mw8;   % Factor entre momentos
+h_max_ajustada_bajo_mw8 = h_max_acumulada_bajo_mw8 * factor_bajo;  % Ajuste de altura
 
-% Mostrar resultados
-if alcanzado
-    fprintf('✅ Se necesitan %d eventos Mw 8 (bajo slip) para igualar o superar el momento sísmico de Mw 9.5\n', indice_bajo);
-    fprintf('Momento acumulado: %.2e Nm\n', Ms_acumulado_bajo_mw8);
-else
-    factor_bajo = Ms_9_5_bajo / Ms_acumulado_bajo_mw8;
-    fprintf('⚠️ No se alcanzó el momento sísmico de Mw 9.5 con todos los eventos disponibles.\n');
-    fprintf('Se usaron los %d eventos disponibles (suma total: %.2e Nm)\n', length(Ms_8_bajo), Ms_acumulado_bajo_mw8);
-    fprintf('El factor de escala necesario es: %.4f\n', factor_bajo);
-    h_max_acumulada_bajo_mw8 = h_max_acumulada_bajo_mw8 * factor_bajo;
-end
+fprintf('\n🔸 BAJO SLIP\n');
+fprintf('Se acumularon %d eventos Mw 8 (bajo slip)\n', n_bajo);
+fprintf('Momento acumulado: %.2e Nm\n', Ms_acumulado_bajo_mw8);
+fprintf('Momento Mw 9.5 (bajo slip): %.2e Nm\n', Ms_9_5_bajo);
+fprintf('🔁 Factor Mw8/Mw9.5: %.4f\n', factor_bajo);
+fprintf('Altura ajustada Mw 8 (bajo slip): %.2f m\n', h_max_ajustada_bajo_mw8);
 
 % --- Datos para el gráfico ---
-alturas = [h_max_acumulada_alto_mw8, h_max_alto_mw9_5;
-           h_max_acumulada_bajo_mw8, h_max_bajo_mw9_5];
+alturas = [h_max_ajustada_alto_mw8, h_max_alto_mw9_5;
+           h_max_ajustada_bajo_mw8, h_max_bajo_mw9_5];
 
 labels = {'Alto Slip', 'Bajo Slip'};
 
@@ -200,4 +169,3 @@ title('Tamaño ∝ Slip × 10; Color ∝ H_{max} (bajo slip)')
 xlabel('Magnitud (con dispersión por distancia)')
 ylabel('Latitud Sur')
 
-hola
