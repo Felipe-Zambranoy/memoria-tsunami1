@@ -44,10 +44,10 @@ Mw9_5_unitarios_AltoSlip = datos_Mw9_5(datos_Mw9_5.Slip_max >= 40, :);
 Mw9_5_unitarios_BajoSlip = datos_Mw9_5(datos_Mw9_5.Slip_max <  40, :);
   
 
-alto = Mw9_5_unitarios_AltoSlip(1, :);      
-bajo = Mw9_5_unitarios_BajoSlip(1, :);
-h_max_alto_mw9_5=alto{1,8};
-h_max_bajo_mw9_5=bajo{1,8};
+alto = Mw9_5_unitarios_AltoSlip(1, :);    %elegir un caso de mw_9.5_alto
+bajo = Mw9_5_unitarios_BajoSlip(1, :);    %elegir un caso de mw_9.5_bajo
+h_max_alto_mw9_5=alto{1,3};
+h_max_bajo_mw9_5=bajo{1,3};
 
 % --- Calcular momento sismico de 9.5 Mw---
 slip_mean_9_5_alto = alto{1,19};  
@@ -88,7 +88,7 @@ end
 
 % --- Acumulación para alto slip ---
 Ms_acumulado_alto_mw8 = sum(Ms_8_alto);  % Suma total de momentos Mw 8 alto slip
-h_max_acumulada_alto_mw8 = sum(Mw8_alto.H_mean);  % Suma total de alturas
+h_max_acumulada_alto_mw8 = sum(Mw8_alto.H_max);  % Suma total de alturas
 
 factor_alto = Ms_9_5_alto/Ms_acumulado_alto_mw8;   % Se calcula el factor entre momentos
 h_max_ajustada_alto_mw8 = h_max_acumulada_alto_mw8 * factor_alto;  % Ajuste de altura
@@ -103,7 +103,7 @@ fprintf('Altura ajustada Mw 8 (alto slip): %.2f m\n', h_max_ajustada_alto_mw8);
 
 % --- Acumulación para bajo slip ---
 Ms_acumulado_bajo_mw8 = sum(Ms_8_bajo);  % Suma total de momentos Mw 8 bajo slip
-h_max_acumulada_bajo_mw8 = sum(Mw8_bajo.H_mean);  % Suma total de alturas
+h_max_acumulada_bajo_mw8 = sum(Mw8_bajo.H_max);  % Suma total de alturas
 
 factor_bajo = Ms_9_5_bajo/Ms_acumulado_bajo_mw8;   % Factor entre momentos
 h_max_ajustada_bajo_mw8 = h_max_acumulada_bajo_mw8 * factor_bajo;  % Ajuste de altura
