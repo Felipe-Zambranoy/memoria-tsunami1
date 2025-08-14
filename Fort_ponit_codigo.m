@@ -29,24 +29,32 @@ datos_Mw9 = datos(datos.Mw == 9.0, :);   % Filtra eventos con magnitud Mw 9.0
 datos_Mw9_5 = datos(datos.Mw == 9.5, :);   % Filtra eventos con magnitud Mw 9.5
 
 
-% --- Casos Mw8: 32 unitarios de alto y bajo slip ---
-Mw8_unitarios_AltoSlip = datos_Mw8(1:32, :);       % Primeros 32 eventos de alto slip
-Mw8_unitarios_BajoSlip = datos_Mw8(36:67, :);      % Eventos 36 al 67 como bajo slip
+% --- Clasificación automática por Slip_max ---
+% Si Slip_max >= 2 → Alto Slip
+Mw8_unitarios_AltoSlip = datos_Mw8(datos_Mw8.Slip_max >= 2, :);
+Mw8_unitarios_BajoSlip = datos_Mw8(datos_Mw8.Slip_max <  2, :);
+
+% --- Casos Mw9: unitarios de alto y bajo slip ---
+Mw9_unitarios_AltoSlip = datos_Mw9(datos_Mw9.Slip_max >= 15, :);
+Mw9_unitarios_BajoSlip = datos_Mw9(datos_Mw9.Slip_max <  15, :);
+
 
 % --- Casos Mw9.5: unitarios de alto y bajo slip ---
-Mw9_5_unitarios_AltoSlip = datos_Mw9_5(1:28, :);       % Primeros 28 eventos de alto slip
-Mw9_5_unitarios_BajoSlip = datos_Mw9_5(29:48, :);      % Eventos 29 al 48 como bajo slip
-alto = Mw9_5_unitarios_AltoSlip(14, :);                 % un evento de 9,5 de alto slip
-bajo = Mw9_5_unitarios_BajoSlip(10, :);
-h_max_alto_mw9_5=alto{1,3};
-h_max_bajo_mw9_5=bajo{1,3};
+Mw9_5_unitarios_AltoSlip = datos_Mw9_5(datos_Mw9_5.Slip_max >= 40, :);
+Mw9_5_unitarios_BajoSlip = datos_Mw9_5(datos_Mw9_5.Slip_max <  40, :);
+  
+
+alto = Mw9_5_unitarios_AltoSlip(1, :);      
+bajo = Mw9_5_unitarios_BajoSlip(1, :);
+h_max_alto_mw9_5=alto{1,8};
+h_max_bajo_mw9_5=bajo{1,8};
 
 % --- Calcular momento sismico de 9.5 Mw---
 slip_mean_9_5_alto = alto{1,19};  
 slip_mean_9_5_bajo = bajo{1,19};
 Area_9_5_alto = alto{1,18};       % area total slip alto
 Area_9_5_bajo = bajo{1,18};       % area total slip bajo
-Ms_9_5_alto = slip_mean_9_5_alto * Area_9_5_alto;   %momento sismico alto
+Ms_9_5_alto = slip_mean_9_5_alto * Area_9_5_alto;  %momento sismico alto
 Ms_9_5_bajo = slip_mean_9_5_bajo * Area_9_5_bajo;   %momento sismico bajo
 
 % --- latitudes norte y sur del sismo de  9.5 Mw---
@@ -61,6 +69,7 @@ filtro_alto = (Mw8_unitarios_AltoSlip.Lat_S >= ls_9_5_alto) & (Mw8_unitarios_Alt
 Mw8_alto = Mw8_unitarios_AltoSlip(filtro_alto, :);
 filtro_bajo = (Mw8_unitarios_BajoSlip.Lat_S >= ls_9_5_bajo) & (Mw8_unitarios_BajoSlip.Lat_S <= ln_9_5_bajo);
 Mw8_bajo = Mw8_unitarios_BajoSlip(filtro_bajo, :);
+
 
 n_alto = height(Mw8_alto);   % cantidad de filas de alto slip
 n_bajo = height(Mw8_bajo);   % cantidad de filas de bajo slip
@@ -79,10 +88,11 @@ end
 
 % --- Acumulación para alto slip ---
 Ms_acumulado_alto_mw8 = sum(Ms_8_alto);  % Suma total de momentos Mw 8 alto slip
-h_max_acumulada_alto_mw8 = sum(Mw8_alto.H_max);  % Suma total de alturas
+h_max_acumulada_alto_mw8 = sum(Mw8_alto.H_mean);  % Suma total de alturas
 
-factor_alto = Ms_9_5_alto/Ms_acumulado_alto_mw8 ;  % Se calcula el factor entre momentos
+factor_alto = Ms_9_5_alto/Ms_acumulado_alto_mw8;   % Se calcula el factor entre momentos
 h_max_ajustada_alto_mw8 = h_max_acumulada_alto_mw8 * factor_alto;  % Ajuste de altura
+
 
 fprintf('🔹 ALTO SLIP\n');
 fprintf('Se acumularon %d eventos Mw 8 (alto slip)\n', n_alto);
@@ -93,7 +103,7 @@ fprintf('Altura ajustada Mw 8 (alto slip): %.2f m\n', h_max_ajustada_alto_mw8);
 
 % --- Acumulación para bajo slip ---
 Ms_acumulado_bajo_mw8 = sum(Ms_8_bajo);  % Suma total de momentos Mw 8 bajo slip
-h_max_acumulada_bajo_mw8 = sum(Mw8_bajo.H_max);  % Suma total de alturas
+h_max_acumulada_bajo_mw8 = sum(Mw8_bajo.H_mean);  % Suma total de alturas
 
 factor_bajo = Ms_9_5_bajo/Ms_acumulado_bajo_mw8;   % Factor entre momentos
 h_max_ajustada_bajo_mw8 = h_max_acumulada_bajo_mw8 * factor_bajo;  % Ajuste de altura
